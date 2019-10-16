@@ -43,15 +43,20 @@ namespace WebAdmin.Controllers
 
 
                         HttpResponseMessage response = await client.PostAsJsonAsync("api/Auth/Login", loginViewModel);
+                        var jsonString = await response.Content.ReadAsStringAsync();
+                        var body = JsonConvert.DeserializeObject<BaseViewModel<TokenViewModel>>(jsonString);
                         if (response.IsSuccessStatusCode)
                         {
-                            var jsonString = await response.Content.ReadAsStringAsync();
-                            var body = JsonConvert.DeserializeObject<BaseViewModel<TokenViewModel>>(jsonString);
+                            
                             if (body.Data.Roles.Any(_ => _.ToUpper().Contains(Role.Admin.ToUpper())))
                             {
                                 HttpContext.Session.Set<TokenViewModel>(Constant.TOKEN, body.Data);
                                 return RedirectToAction("Index", "Home");
                             }
+                        }
+                        else
+                        {
+                            ViewBag.Error = body.Description;
                         }
                     }
                 }

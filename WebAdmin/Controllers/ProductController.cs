@@ -28,15 +28,15 @@ namespace WebAdmin.Controllers
                     client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
                     client.DefaultRequestHeaders.Add("Authorization", $"Bearer {_token.Access_token}");
 
-                    HttpResponseMessage response = await client.GetAsync("api/Products/GetAll");
+                    HttpResponseMessage response = await client.GetAsync("api/Products/GetAll?Include=Category");
                     if (response.IsSuccessStatusCode)
                     {
                         var jsonString = await response.Content.ReadAsStringAsync();
-                        var body = JsonConvert.DeserializeObject<BaseViewModel<ProductViewModel>>(jsonString);
+                        var body = JsonConvert.DeserializeObject<BaseViewModel<PagingResult<ProductViewModel>>>(jsonString);
                         ProductIndexViewModel productIndexViewModel = new ProductIndexViewModel
                         {
                             User = _token,
-                            Product = body.Data
+                            Products = body.Data.Results.ToList()
                         };
                         return View(productIndexViewModel);
                     }
@@ -104,9 +104,34 @@ namespace WebAdmin.Controllers
         }
 
         // GET: Product/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(string id)
         {
-            return View();
+            TokenViewModel _token = HttpContext.Session.Get<TokenViewModel>(Constant.TOKEN);
+            if (_token != null)
+            {
+                using (var client = new HttpClient())
+                {
+                    // TODO: Add insert logic here
+                    client.BaseAddress = new Uri("https://cocshopwebapi20190925023900.azurewebsites.net/");
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+                    client.DefaultRequestHeaders.Add("Authorization", $"Bearer {_token.Access_token}");
+
+                    HttpResponseMessage response = await client.DeleteAsync($"api/Products/{id}");
+                    var jsonString = await response.Content.ReadAsStringAsync();
+                    var body = JsonConvert.DeserializeObject<BaseViewModel<string>>(jsonString);
+                    if (response.IsSuccessStatusCode)
+                    {        
+                        return  Json(new { status = true});
+                    }
+                    else
+                    {
+                        return Json(new { status = false, error = body.Description});
+                    }
+
+                }
+            }
+            return RedirectToAction("Login", "Auth");   
         }
 
         // POST: Product/Delete/5

@@ -86,6 +86,13 @@
                                         <input type="text" class="form-control" placeholder="First Name...">
                                       </div>
                                     </span> -->
+                                    @if (ViewBag.Error != null)
+                                    {
+                                        <center>
+                                            <span class="text-danger" style="text-align:center">@ViewBag.Error</span>
+                                        </center>
+                                    }
+
                                     <center>
                                         <span asp-validation-for="Username" class="text-danger" style="text-align:center"></span>
                                     </center>

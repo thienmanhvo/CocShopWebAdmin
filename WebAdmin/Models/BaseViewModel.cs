@@ -24,4 +24,13 @@ namespace WebAdmin.Models
         //[JsonExtensionData]
         //public virtual Dictionary<string, object> AdditionalData { get; set; } = new Dictionary<string, object>();
     }
+    public class PagingResult<T>
+    {
+
+        public int TotalRecords { get; set; }
+        public int? PageIndex { get; set; }
+
+        public int? PageSize { get; set; }
+        public IEnumerable<T> Results { get; set; }
+    }
 }
