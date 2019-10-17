@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -31,5 +32,17 @@ namespace WebAdmin.Models
         public string AvatarPath { get; set; }
         public MyEnum.Gender Gender { get; set; }
         public string Birthday { get; set; }
+    }
+    public class ChangePasswordViewModel
+    {
+        [StringLength(100, MinimumLength = 6, ErrorMessage = "The {0} characters must between {2} and {1} characters.")]
+        [Required]
+        public string OldPassword { get; set; }
+        [StringLength(100, MinimumLength = 6, ErrorMessage = "The {0} characters must between {2} and {1} characters.")]
+        [Required]
+        public string NewPassword { get; set; }
+        [JsonIgnore]
+        public TokenViewModel User { get; set; }
+
     }
 }

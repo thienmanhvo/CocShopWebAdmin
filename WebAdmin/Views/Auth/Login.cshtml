@@ -92,7 +92,12 @@
                                             <span class="text-danger" style="text-align:center">@ViewBag.Error</span>
                                         </center>
                                     }
-
+                                    @if (ViewBag.Success != null)
+                                    {
+                                        <center>
+                                            <span class="text-success" style="text-align:center">@ViewBag.Success</span>
+                                        </center>
+                                    }
                                     <center>
                                         <span asp-validation-for="Username" class="text-danger" style="text-align:center"></span>
                                     </center>

@@ -19,6 +19,10 @@ namespace WebAdmin.Controllers
         // GET: Login
         public ActionResult Login()
         {
+            if (TempData["Success"] != null)
+            {
+                ViewBag.Success = TempData["Success"];
+            }
             TokenViewModel _token = HttpContext.Session.Get<TokenViewModel>(Constant.TOKEN);
             if (_token != null)
             {
@@ -54,6 +58,10 @@ namespace WebAdmin.Controllers
                             {
                                 HttpContext.Session.Set<TokenViewModel>(Constant.TOKEN, body.Data);
                                 return RedirectToAction("Index", "Home");
+                            }
+                            else
+                            {
+                                ViewBag.Error = "You don't have permission to access this website.";
                             }
                         }
                         else
@@ -129,6 +137,30 @@ namespace WebAdmin.Controllers
                     user.Genders = GetAllGender();
                     if (response.IsSuccessStatusCode)
                     {
+                        client.DefaultRequestHeaders.Clear();
+                        client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+                        client.DefaultRequestHeaders.Add("Authorization", $"Bearer {_token.Access_token}");
+                        response = await client.GetAsync("api/Auth/GetToken");
+                        jsonString = await response.Content.ReadAsStringAsync();
+                        var token = JsonConvert.DeserializeObject<BaseViewModel<TokenViewModel>>(jsonString);
+                        if (response.IsSuccessStatusCode)
+                        {
+
+                            if (token.Data.Roles.Any(_ => _.ToUpper().Contains(Role.Admin.ToUpper())))
+                            {
+                                HttpContext.Session.Set<TokenViewModel>(Constant.TOKEN, token.Data);
+                            }
+                            else
+                            {
+                                HttpContext.Session.Clear();
+                                return RedirectToAction("Login", "Auth");
+                            }
+                        }
+                        else
+                        {
+                            ViewBag.Error = token.Description;
+                            return View(user);
+                        }
                         ViewBag.Success = "Update profile successfully";
                         return View(user);
                     }
@@ -156,6 +188,61 @@ namespace WebAdmin.Controllers
                 result.Add(selectItem);
             }
             return result;
+        }
+        public ActionResult ChangePassword()
+        {
+            TokenViewModel _token = HttpContext.Session.Get<TokenViewModel>(Constant.TOKEN);
+            if (_token != null)
+            {
+                ChangePasswordViewModel changePasswordViewModel = new ChangePasswordViewModel()
+                {
+                    User = _token,
+                };
+
+                return View(changePasswordViewModel);
+            }
+            return RedirectToAction("Login", "Auth");
+        }
+        [HttpPost]
+        public async Task<ActionResult> ChangePassword(ChangePasswordViewModel changePasswordViewModel)
+        {
+            TokenViewModel _token = HttpContext.Session.Get<TokenViewModel>(Constant.TOKEN);
+            if (_token != null)
+            {
+                using (var client = new HttpClient())
+                {
+                    // TODO: Add insert logic here
+                    client.BaseAddress = new Uri("https://cocshopwebapi20190925023900.azurewebsites.net/");
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+                    client.DefaultRequestHeaders.Add("Authorization", $"Bearer {_token.Access_token}");
+                    HttpResponseMessage response = await client.PostAsJsonAsync("api/Auth/ChangePassword", changePasswordViewModel);
+                    var jsonString = await response.Content.ReadAsStringAsync();
+                    var body = JsonConvert.DeserializeObject<BaseViewModel<ChangePasswordViewModel>>(jsonString);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        HttpContext.Session.Clear();
+                        TempData["Success"]  = "Change password successfully. You must relogin to continute.";
+                        return RedirectToAction("Login", "Auth");
+                    }
+                    else
+                    {
+                        ViewBag.Error = body.Description;
+                    }
+                }
+                return View(changePasswordViewModel);
+            }
+            return RedirectToAction("Login", "Auth");
+        }
+
+        public ActionResult Logout(ChangePasswordViewModel changePasswordViewModel)
+        {
+            TokenViewModel _token = HttpContext.Session.Get<TokenViewModel>(Constant.TOKEN);
+            if (_token != null)
+            {
+                HttpContext.Session.Clear();
+            }
+            return RedirectToAction("Login", "Auth");
         }
     }
 }
