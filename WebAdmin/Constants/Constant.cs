@@ -15,5 +15,6 @@ namespace WebAdmin.Constants
     {
         public const string USER_LOGIN = "USER_LOGIN";
         public const string TOKEN = "Token";
+        public const string DEFAUT_IMAGE_PATH = "https://cdn.filestackcontent.com/NH4aFtqKRUSKWvuVGN8d";
     }
 }
