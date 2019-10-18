@@ -28,7 +28,12 @@ namespace WebAdmin.Models
     }
     public class IndexRoleVewModel
     {
-        public ICollection<RoleViewModel> Locations { get; set; }
+        public ICollection<RoleViewModel> Roles { get; set; }
+        public TokenViewModel User { get; set; }
+    }
+    public class CreateRoleVewModel
+    {
+        public CreateRoleRequestViewModel Role { get; set; }
         public TokenViewModel User { get; set; }
     }
 

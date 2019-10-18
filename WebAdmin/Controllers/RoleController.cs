@@ -42,21 +42,21 @@ namespace WebAdmin.Controllers
                     if (response.IsSuccessStatusCode)
                     {
 
-                        IndexRoleVewModel locationIndexViewModel = new IndexRoleVewModel
+                        IndexRoleVewModel RoleIndexViewModel = new IndexRoleVewModel
                         {
                             User = _token,
-                            Locations = body.Data.Results.ToList()
+                            Roles = body.Data.Results.ToList()
                         };
-                        return View(locationIndexViewModel);
+                        return View(RoleIndexViewModel);
                     }
                     else
                     {
                         ViewBag.Error = body.Description;
-                        IndexRoleVewModel locationIndexViewModel = new IndexRoleVewModel
+                        IndexRoleVewModel RoleIndexViewModel = new IndexRoleVewModel
                         {
                             User = _token,
                         };
-                        return View(locationIndexViewModel);
+                        return View(RoleIndexViewModel);
                     }
 
                 }
@@ -64,33 +64,86 @@ namespace WebAdmin.Controllers
             return RedirectToAction("Login", "Auth");
         }
 
-        // GET: Role/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
         // GET: Role/Create
         public ActionResult Create()
         {
-            return View();
+            TokenViewModel _token = HttpContext.Session.Get<TokenViewModel>(Constant.TOKEN);
+            if (_token != null)
+            {
+                CreateRoleVewModel RoleIndexViewModel = new CreateRoleVewModel
+                {
+                    User = _token,
+                };
+                return View(RoleIndexViewModel);
+            }
+            else
+            {
+                return RedirectToAction("Login", "Auth");
+            }
         }
 
         // POST: Role/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<ActionResult> Create(CreateRoleVewModel RoleViewModel)
         {
-            try
-            {
-                // TODO: Add insert logic here
+            TokenViewModel _token = HttpContext.Session.Get<TokenViewModel>(Constant.TOKEN);
 
-                return RedirectToAction(nameof(Index));
-            }
-            catch
+            if (_token != null)
             {
-                return View();
+                try
+                {
+                    if (ModelState.IsValid)
+                    {
+                        using (var client = new HttpClient())
+                        {
+                            // TODO: Add insert logic here
+
+                            client.BaseAddress = new Uri("https://cocshopwebapi20190925023900.azurewebsites.net/");
+                            client.DefaultRequestHeaders.Accept.Clear();
+                            client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+                            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {_token.Access_token}");
+                            HttpResponseMessage response = await client.PostAsJsonAsync($"api/Role", RoleViewModel.Role);
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var body = JsonConvert.DeserializeObject<BaseViewModel<CreateRoleRequestViewModel>>(jsonString);
+                            if (response.IsSuccessStatusCode)
+                            {
+                                TempData["Success"] = "Create Successfully";
+                                return RedirectToAction("Index", "Role");
+                            }
+                            else
+                            {
+                                RoleViewModel = new CreateRoleVewModel
+                                {
+                                    User = _token,
+                                    Role = RoleViewModel.Role,
+                                };
+                                ViewBag.Error = body.Description;
+                                return View(RoleViewModel);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        CreateRoleVewModel RoleEditViewModel = new CreateRoleVewModel
+                        {
+                            User = _token,
+                            Role = RoleViewModel.Role
+                        };
+                        return View(RoleEditViewModel);
+                    }
+                }
+                catch
+                {
+                    CreateRoleVewModel RoleEditViewModel = new CreateRoleVewModel
+                    {
+                        User = _token,
+                        Role = RoleViewModel.Role
+                    };
+                    return View(RoleEditViewModel);
+                }
             }
+            return RedirectToAction("Login", "Auth");
         }
 
         // GET: Role/Edit/5

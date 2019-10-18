@@ -1,4 +1,4 @@
-﻿@model ProductEditViewModel
+﻿@model CreateRoleVewModel
 
 <body class="">
     <!-- Extra details for Live View on GitHub Pages -->
@@ -190,83 +190,22 @@
                     <div class="row justify-content-md-center">
 
                         <div class="col-md-10">
-                            <form id="RegisterValidation" class="form" method="post" asp-controller="Product" asp-action="Edit">
+                            <form id="RegisterValidation" class="form" method="post" asp-controller="Role" asp-action="Create">
                                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                                 <div class="card">
                                     <div class="card-header card-header-rose card-header-icon">
                                         <div class="card-icon">
                                             <i class="material-icons">edit</i>
                                         </div>
-                                        <div class="card-icon float-sm-right">
-                                            <img src="@Url.Content(Model.Product.ImagePath)" id="img-product" class=".img-thumbnail" style="height:100px;width:100px" />
-                                        </div>
-                                        <h4 class="card-title">Edit Product</h4>
-
+                                        <h4 class="card-title">Create Role</h4>
                                     </div>
                                     <div class="row justify-content-md-center">
                                         <div class="card-body col-md-10">
-
                                             <div class="form-group">
-                                                <label asp-for="Product.ProductName" class="control-label bmd-label-floating"></label>
-                                                <input asp-for="Product.ProductName" type="text" class="form-control" required>
-                                                <span asp-validation-for="Product.ProductName" class="text-danger"></span>
+                                                <label asp-for="Role.Name" class="control-label bmd-label-floating"></label>
+                                                <input asp-for="Role.Name" class="form-control" required>
+                                                <span asp-validation-for="Role.Name" class="text-danger"></span>
                                             </div>
-                                            <div class="form-group">
-                                                <label asp-for="Product.Price" class="control-label bmd-label-floating"></label>
-                                                <input asp-for="Product.Price" class="form-control" min="0" type="number" required>
-                                                <span asp-validation-for="Product.Price" class="text-danger"></span>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label asp-for="Product.Quantity" class="control-label bmd-label-floating"></label>
-                                                <input asp-for="Product.Quantity" class="form-control" min="0" required>
-                                                <span asp-validation-for="Product.Quantity" class="text-danger"></span>
-                                            </div>
-                                            <div class="form-group">
-
-                                                <label asp-for="Product.Description" class="control-label bmd-label-floating"></label>
-                                                <input asp-for="Product.Description" type="text" class="form-control">
-                                                <span asp-validation-for="Product.Description" class="text-danger"></span>
-                                            </div>
-
-                                            <div class="form-group">
-
-                                                @*<label asp-for="Product.ImagePath" class="control-label"></label>*@
-                                                <input asp-for="Product.ImagePath" id="avatar" hidden class="form-control">
-                                            </div>
-
-                                            <div class="form-group">
-
-                                                <label asp-for="Product.PriceSale" class="control-label bmd-label-floating"></label>
-                                                <input asp-for="Product.NoNullPriceSale" class="form-control" type="number" min="0" />
-                                                <span asp-validation-for="Product.PriceSale" class="text-danger"></span>
-                                            </div>
-                                            <div class="form-group">
-                                                <label asp-for="Product.Category.Name" class="control-label"></label>
-                                                <br />
-                                                @* @Html.DropDownListFor(modelItem => modelItem.Categorys, (IEnumerable<SelectListItem>)ViewBag.Category , new { @class="selectpicker" ,@data_style ="btn btn-primary btn-round"} )*@
-                                                <select asp-for="Product.CateId" class="selectpicker" data-style="select-with-transition" title="Select Category" asp-items="@Model.Categories" required> </select>
-                                                <input asp-for="Product.Category.Id" hidden />
-                                            </div>
-                                            <div class="form-check mr-auto">
-                                                <label class="form-check-label">
-                                                    <label asp-for="Product.IsSale"></label>
-                                                    <input asp-for="Product.NoNullIsSale" class="form-check-input" type="checkbox" />
-                                                    <span class="form-check-sign">
-                                                        <span class="check"></span>
-                                                    </span>
-                                                </label>
-                                            </div>
-                                            <div class="form-check mr-auto">
-                                                <label class="form-check-label">
-                                                    <label asp-for="Product.IsBest"></label>
-                                                    <input asp-for="Product.NoNullIsBest" class="form-check-input" type="checkbox" />
-                                                    <span class="form-check-sign">
-                                                        <span class="check"></span>
-                                                    </span>
-                                                </label>
-                                            </div>
-
                                             <div class="category form-category">* Required fields</div>
                                         </div>
 
@@ -277,7 +216,6 @@
 
                                         </div>
                                         <button type="submit" class="btn btn-rose">Submit</button>
-                                        <button type="button" id="update" class="btn btn-rose">UpLoad</button>
                                     </div>
                                 </div>
                             </form>
@@ -285,8 +223,6 @@
                     </div>
                 </div>
             </div>
-
-
             <footer class="footer">
                 <div class="container-fluid">
                     <nav class="float-left">
@@ -427,50 +363,50 @@
         </div>
     </div>
     <!--   Core JS Files   -->
-    <script src="../../assets/js/core/jquery.min.js"></script>
-    <script src="../../assets/js/core/popper.min.js"></script>
-    <script src="../../assets/js/core/bootstrap-material-design.min.js"></script>
-    <script src="../../assets/js/plugins/perfect-scrollbar.jquery.min.js"></script>
+    <script src="~/assets/js/core/jquery.min.js"></script>
+    <script src="~/assets/js/core/popper.min.js"></script>
+    <script src="~/assets/js/core/bootstrap-material-design.min.js"></script>
+    <script src="~/assets/js/plugins/perfect-scrollbar.jquery.min.js"></script>
     <!-- Plugin for the momentJs  -->
-    <script src="../../assets/js/plugins/moment.min.js"></script>
+    <script src="~/assets/js/plugins/moment.min.js"></script>
     <!--  Plugin for Sweet Alert -->
-    <script src="../../assets/js/plugins/sweetalert2.js"></script>
+    <script src="~/assets/js/plugins/sweetalert2.js"></script>
     <!-- Forms Validations Plugin -->
-    <script src="../../assets/js/plugins/jquery.validate.min.js"></script>
+    <script src="~/assets/js/plugins/jquery.validate.min.js"></script>
     <!-- Plugin for the Wizard, full documentation here: https://github.com/VinceG/twitter-bootstrap-wizard -->
-    <script src="../../assets/js/plugins/jquery.bootstrap-wizard.js"></script>
+    <script src="~/assets/js/plugins/jquery.bootstrap-wizard.js"></script>
     <!--	Plugin for Select, full documentation here: http://silviomoreto.github.io/bootstrap-select -->
-    <script src="../../assets/js/plugins/bootstrap-selectpicker.js"></script>
+    <script src="~/assets/js/plugins/bootstrap-selectpicker.js"></script>
     <!--  Plugin for the DateTimePicker, full documentation here: https://eonasdan.github.io/bootstrap-datetimepicker/ -->
-    <script src="../../assets/js/plugins/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/assets/js/plugins/bootstrap-datetimepicker.min.js"></script>
     <!--  DataTables.net Plugin, full documentation here: https://datatables.net/  -->
-    <script src="../../assets/js/plugins/jquery.dataTables.min.js"></script>
+    <script src="~/assets/js/plugins/jquery.dataTables.min.js"></script>
     <!--	Plugin for Tags, full documentation here: https://github.com/bootstrap-tagsinput/bootstrap-tagsinputs  -->
-    <script src="../../assets/js/plugins/bootstrap-tagsinput.js"></script>
+    <script src="~/assets/js/plugins/bootstrap-tagsinput.js"></script>
     <!-- Plugin for Fileupload, full documentation here: http://www.jasny.net/bootstrap/javascript/#fileinput -->
-    <script src="../../assets/js/plugins/jasny-bootstrap.min.js"></script>
+    <script src="~/assets/js/plugins/jasny-bootstrap.min.js"></script>
     <!--  Full Calendar Plugin, full documentation here: https://github.com/fullcalendar/fullcalendar    -->
-    <script src="../../assets/js/plugins/fullcalendar.min.js"></script>
+    <script src="~/assets/js/plugins/fullcalendar.min.js"></script>
     <!-- Vector Map plugin, full documentation here: http://jvectormap.com/documentation/ -->
-    <script src="../../assets/js/plugins/jquery-jvectormap.js"></script>
+    <script src="~/assets/js/plugins/jquery-jvectormap.js"></script>
     <!--  Plugin for the Sliders, full documentation here: http://refreshless.com/nouislider/ -->
-    <script src="../../assets/js/plugins/nouislider.min.js"></script>
+    <script src="~/assets/js/plugins/nouislider.min.js"></script>
     <!-- Include a polyfill for ES6 Promises (optional) for IE11, UC Browser and Android browser support SweetAlert -->
-    <script src="../../../../cdnjs.cloudflare.com/ajax/libs/core-js/2.4.1/core.js"></script>
+    <script src="../../../cdnjs.cloudflare.com/ajax/libs/core-js/2.4.1/core.js"></script>
     <!-- Library for adding dinamically elements -->
-    <script src="../../assets/js/plugins/arrive.min.js"></script>
+    <script src="~/assets/js/plugins/arrive.min.js"></script>
     <!--  Google Maps Plugin    -->
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB2Yno10-YTnLjjn_Vtk0V8cdcY5lC4plU"></script>
     <!-- Place this tag in your head or just before your close body tag. -->
-    <script async defer src="../../../../buttons.github.io/buttons.js"></script>
+    <script async defer src="../../../buttons.github.io/buttons.js"></script>
     <!-- Chartist JS -->
-    <script src="../../assets/js/plugins/chartist.min.js"></script>
+    <script src="~/assets/js/plugins/chartist.min.js"></script>
     <!--  Notifications Plugin    -->
-    <script src="../../assets/js/plugins/bootstrap-notify.js"></script>
+    <script src="~/assets/js/plugins/bootstrap-notify.js"></script>
     <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
-    <script src="../../assets/js/material-dashboard.minf066.js?v=2.1.0" type="text/javascript"></script>
+    <script src="~/assets/js/material-dashboard.minf066.js?v=2.1.0" type="text/javascript"></script>
     <!-- Material Dashboard DEMO methods, don't include it in your project! -->
-    <script src="../../assets/demo/demo.js"></script>
+    <script src="~/assets/demo/demo.js"></script>
     <script>
         $(document).ready(function () {
             $().ready(function () {
@@ -643,7 +579,7 @@
         });
     </script>
     <!-- Sharrre libray -->
-    <script src="../../assets/demo/jquery.sharrre.js"></script>
+    <script src="~/assets/demo/jquery.sharrre.js"></script>
     <script>
         $(document).ready(function () {
 
@@ -716,7 +652,7 @@
                 s = b.getElementsByTagName(e)[0];
                 s.parentNode.insertBefore(t, s)
             }(window,
-                document, 'script', '../../../../connect.facebook.net/en_US/fbevents.js');
+                document, 'script', '../../../connect.facebook.net/en_US/fbevents.js');
 
             try {
                 fbq('init', '111649226022273');
@@ -731,88 +667,13 @@
     <noscript>
         <img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=111649226022273&amp;ev=PageView&amp;noscript=1" />
     </noscript>
-    <script src="//static.filestackapi.com/filestack-js/1.x.x/filestack.min.js"></script>
     <script>
         $(document).ready(function () {
-            $('#datatables').DataTable({
-                "pagingType": "full_numbers",
-                "lengthMenu": [
-                    [10, 25, 50, -1],
-                    [10, 25, 50, "All"]
-                ],
-                responsive: true,
-                language: {
-                    search: "_INPUT_",
-                    searchPlaceholder: "Search records",
-                }
-            });
+            // Javascript method's body can be found in assets/js/demos.js
+            md.initDashboardPageCharts();
 
-            var table = $('#datatable').DataTable();
+            md.initVectorMap();
 
-            // Edit record
-            table.on('click', '.edit', function () {
-                $tr = $(this).closest('tr');
-                var data = table.row($tr).data();
-                alert('You press on Row: ' + data[0] + ' ' + data[1] + ' ' + data[2] + '\'s row.');
-            });
-
-            // Delete a record
-            table.on('click', '.remove', function (e) {
-                $tr = $(this).closest('tr');
-                table.row($tr).remove().draw();
-                e.preventDefault();
-            });
-
-            //Like record
-            table.on('click', '.like', function () {
-                alert('You clicked on Like button');
-            });
-
-            $('#update').on('click', function (e) {
-
-                const client = filestack.init('A5gVwSEBQmeKlM0g3nLN3z');
-
-                const options = {
-                    "maxFiles": 1,
-                    "accept": [
-                        "image/jpeg",
-                        "image/jpg",
-                        "image/png",
-                        "image/bmp",
-                        "image/gif",
-                        "application/pdf"
-                    ],
-                    "storeTo": {
-                        "container": "devportal-customers-assets",
-                        "path": "user-uploads/",
-                        "region": "us-east-1"
-                    },
-                    "fromSources": [
-                        "local_file_system"
-                    ],
-                    "uploadInBackground": false,
-                    onFileSelected: file => {
-                        // If you throw any error in this function it will reject the file selection.
-                        // The error message will be displayed to the user as an alert.
-                        if (file.size > 1000 * 1000) {
-                            throw new Error('File too big, select something smaller than 1MB');
-                        }
-                    },
-                    onUploadDone: res => a(res),
-                };
-                client.picker(options).open();
-
-            });
-
-            function a(Blobs) {
-                var result = Blobs.filesUploaded[0].url;
-                console.log(result);
-                $('#img-product').attr('src', result);
-                $("#avatar").val(result);
-            }
         });
-
-
     </script>
-
 </body>

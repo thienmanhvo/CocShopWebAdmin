@@ -38,7 +38,7 @@ namespace WebAdmin.Controllers
 
                     HttpResponseMessage response = await client.GetAsync("api/Locations/GetAll");
                     var jsonString = await response.Content.ReadAsStringAsync();
-                    var body = JsonConvert.DeserializeObject<BaseViewModel<PagingResult<LocationVewModel>>>(jsonString);
+                    var body = JsonConvert.DeserializeObject<BaseViewModel<PagingResult<LocationViewModel>>>(jsonString);
                     if (response.IsSuccessStatusCode)
                     {
 

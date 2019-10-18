@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace WebAdmin.Models
 {
-    public class LocationVewModel
+    public class LocationViewModel
     {
         public string Id { get; set; }
         public string LocationName { get; set; }
@@ -28,7 +28,7 @@ namespace WebAdmin.Models
     }
     public class IndexLocationVewModel
     {
-        public ICollection<LocationVewModel> Locations { get; set; }
+        public ICollection<LocationViewModel> Locations { get; set; }
         public TokenViewModel User { get; set; }
     }
 

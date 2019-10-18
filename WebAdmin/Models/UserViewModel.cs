@@ -17,6 +17,7 @@ namespace WebAdmin.Models
         public string Email { get; set; }
         [Display(Name = "Username")]
         public string Username { get; set; }
+        [Display(Name = "Avatar")]
         public string AvatarPath { get; set; }
         [Display(Name = "Gender")]
         public MyEnum.Gender Gender { get; set; }
@@ -43,6 +44,11 @@ namespace WebAdmin.Models
         public string NewPassword { get; set; }
         [JsonIgnore]
         public TokenViewModel User { get; set; }
-
     }
+    public class IndexUserVewModel
+    {
+        public ICollection<UserViewModel> Users { get; set; }
+        public TokenViewModel User { get; set; }
+    }
+
 }

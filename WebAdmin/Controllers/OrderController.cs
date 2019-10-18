@@ -12,9 +12,9 @@ using WebAdmin.Models;
 
 namespace WebAdmin.Controllers
 {
-    public class UserController : Controller
+    public class OrderController : Controller
     {
-        // GET: User
+        // GET: Order
         public async Task<ActionResult> Index()
         {
             if (TempData["Success"] != null)
@@ -36,23 +36,23 @@ namespace WebAdmin.Controllers
                     client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
                     client.DefaultRequestHeaders.Add("Authorization", $"Bearer {_token.Access_token}");
 
-                    HttpResponseMessage response = await client.GetAsync("api/MyUsers");
+                    HttpResponseMessage response = await client.GetAsync("api/Order/GetAll?InClude=DeliveryUser,CreatedUser,Location");
                     var jsonString = await response.Content.ReadAsStringAsync();
-                    var body = JsonConvert.DeserializeObject<BaseViewModel<PagingResult<UserViewModel>>>(jsonString);
+                    var body = JsonConvert.DeserializeObject<BaseViewModel<PagingResult<OrderViewModel>>>(jsonString);
                     if (response.IsSuccessStatusCode)
                     {
 
-                        IndexUserVewModel RoleIndexViewModel = new IndexUserVewModel
+                        IndexOrderVewModel RoleIndexViewModel = new IndexOrderVewModel
                         {
                             User = _token,
-                            Users = body.Data.Results.ToList()
+                            Orders = body.Data.Results.ToList()
                         };
                         return View(RoleIndexViewModel);
                     }
                     else
                     {
                         ViewBag.Error = body.Description;
-                        IndexUserVewModel RoleIndexViewModel = new IndexUserVewModel
+                        IndexOrderVewModel RoleIndexViewModel = new IndexOrderVewModel
                         {
                             User = _token,
                         };
@@ -64,19 +64,19 @@ namespace WebAdmin.Controllers
             return RedirectToAction("Login", "Auth");
         }
 
-        // GET: User/Details/5
+        // GET: Order/Details/5
         public ActionResult Details(int id)
         {
             return View();
         }
 
-        // GET: User/Create
+        // GET: Order/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: User/Create
+        // POST: Order/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(IFormCollection collection)
@@ -93,13 +93,13 @@ namespace WebAdmin.Controllers
             }
         }
 
-        // GET: User/Edit/5
+        // GET: Order/Edit/5
         public ActionResult Edit(int id)
         {
             return View();
         }
 
-        // POST: User/Edit/5
+        // POST: Order/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, IFormCollection collection)
@@ -116,13 +116,27 @@ namespace WebAdmin.Controllers
             }
         }
 
-        // GET: User/Delete/5
+        // GET: Order/Delete/5
         public ActionResult Delete(int id)
         {
             return View();
         }
 
-        // POST: User/Delete/5
+        // POST: Order/Delete/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Delete(int id, IFormCollection collection)
+        {
+            try
+            {
+                // TODO: Add delete logic here
 
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View();
+            }
+        }
     }
 }
