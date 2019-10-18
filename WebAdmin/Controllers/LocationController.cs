@@ -1,18 +1,67 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using WebAdmin.Constants;
+using WebAdmin.Extentions;
+using WebAdmin.Models;
 
 namespace WebAdmin.Controllers
 {
     public class LocationController : Controller
     {
         // GET: Location
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
-            return View();
+            if (TempData["Success"] != null)
+            {
+                ViewBag.Success = TempData["Success"];
+            }
+            if (TempData["Error"] != null)
+            {
+                ViewBag.Error = TempData["Error"];
+            }
+            TokenViewModel _token = HttpContext.Session.Get<TokenViewModel>(Constant.TOKEN);
+            if (_token != null)
+            {
+                using (var client = new HttpClient())
+                {
+                    // TODO: Add insert logic here
+                    client.BaseAddress = new Uri("https://cocshopwebapi20190925023900.azurewebsites.net/");
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+                    client.DefaultRequestHeaders.Add("Authorization", $"Bearer {_token.Access_token}");
+
+                    HttpResponseMessage response = await client.GetAsync("api/Locations/GetAll");
+                    var jsonString = await response.Content.ReadAsStringAsync();
+                    var body = JsonConvert.DeserializeObject<BaseViewModel<PagingResult<LocationVewModel>>>(jsonString);
+                    if (response.IsSuccessStatusCode)
+                    {
+
+                        IndexLocationVewModel locationIndexViewModel = new IndexLocationVewModel
+                        {
+                            User = _token,
+                            Locations = body.Data.Results.ToList()
+                        };
+                        return View(locationIndexViewModel);
+                    }
+                    else
+                    {
+                        ViewBag.Error = body.Description;
+                        IndexLocationVewModel locationIndexViewModel = new IndexLocationVewModel
+                        {
+                            User = _token,
+                        };
+                        return View(locationIndexViewModel);
+                    }
+
+                }
+            }
+            return RedirectToAction("Login", "Auth");
         }
 
         // GET: Location/Details/5
@@ -24,70 +73,221 @@ namespace WebAdmin.Controllers
         // GET: Location/Create
         public ActionResult Create()
         {
-            return View();
+            TokenViewModel _token = HttpContext.Session.Get<TokenViewModel>(Constant.TOKEN);
+            if (_token != null)
+            {
+                CreateLocationVewModel locationIndexViewModel = new CreateLocationVewModel
+                {
+                    User = _token,
+                };
+                return View(locationIndexViewModel);
+            }
+            else
+            {
+                return RedirectToAction("Login", "Auth");
+            }
         }
 
         // POST: Location/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<ActionResult> Create(CreateLocationVewModel locationViewModel)
         {
-            try
-            {
-                // TODO: Add insert logic here
+            TokenViewModel _token = HttpContext.Session.Get<TokenViewModel>(Constant.TOKEN);
 
-                return RedirectToAction(nameof(Index));
-            }
-            catch
+            if (_token != null)
             {
-                return View();
+                try
+                {
+                    if (ModelState.IsValid)
+                    {
+                        using (var client = new HttpClient())
+                        {
+                            // TODO: Add insert logic here
+
+                            client.BaseAddress = new Uri("https://cocshopwebapi20190925023900.azurewebsites.net/");
+                            client.DefaultRequestHeaders.Accept.Clear();
+                            client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+                            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {_token.Access_token}");
+                            HttpResponseMessage response = await client.PostAsJsonAsync($"api/Locations", locationViewModel.Location);
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var body = JsonConvert.DeserializeObject<BaseViewModel<UpdateLocationViewModel>>(jsonString);
+                            if (response.IsSuccessStatusCode)
+                            {
+                                TempData["Success"] = "Create Successfully";
+                                return RedirectToAction("Index", "Location");
+                            }
+                            else
+                            {
+                                locationViewModel = new CreateLocationVewModel
+                                {
+                                    User = _token,
+                                    Location = locationViewModel.Location,
+                                };
+                                ViewBag.Error = body.Description;
+                                return View(locationViewModel);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        CreateLocationVewModel locationEditViewModel = new CreateLocationVewModel
+                        {
+                            User = _token,
+                            Location = locationViewModel.Location
+                        };
+                        return View(locationEditViewModel);
+                    }
+                }
+                catch
+                {
+                    CreateLocationVewModel locationEditViewModel = new CreateLocationVewModel
+                    {
+                        User = _token,
+                        Location = locationViewModel.Location
+                    };
+                    return View(locationEditViewModel);
+                }
             }
+            return RedirectToAction("Login", "Auth");
         }
 
         // GET: Location/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(string id)
         {
-            return View();
+            TokenViewModel _token = HttpContext.Session.Get<TokenViewModel>(Constant.TOKEN);
+            if (_token != null)
+            {
+                if (string.IsNullOrEmpty(id))
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+                else
+                {
+                    using (var client = new HttpClient())
+                    {
+                        // TODO: Add insert logic here
+                        client.BaseAddress = new Uri("https://cocshopwebapi20190925023900.azurewebsites.net/");
+                        client.DefaultRequestHeaders.Accept.Clear();
+                        client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+                        client.DefaultRequestHeaders.Add("Authorization", $"Bearer {_token.Access_token}");
+
+                        HttpResponseMessage response = await client.GetAsync($"api/Locations/{id}");
+                        var jsonString = await response.Content.ReadAsStringAsync();
+                        var body = JsonConvert.DeserializeObject<BaseViewModel<UpdateLocationViewModel>>(jsonString);
+                        EditLocationVewModel locationEditViewModel = new EditLocationVewModel
+                        {
+                            User = _token,
+                            Location = body.Data
+                        };
+
+                        if (!response.IsSuccessStatusCode)
+                        {
+                            TempData["Error"] = body.Description;
+                            RedirectToAction("Index", "Location");
+                        }
+
+                        return View(locationEditViewModel);
+                    }
+
+                }
+            }
+            return RedirectToAction("Login", "Auth");
         }
 
         // POST: Location/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<ActionResult> Edit(string id, EditLocationVewModel locationViewModel)
         {
-            try
+            TokenViewModel _token = HttpContext.Session.Get<TokenViewModel>(Constant.TOKEN);
+            if (_token != null)
             {
-                // TODO: Add update logic here
+                try
+                {
+                    if (ModelState.IsValid)
+                    {
+                        using (var client = new HttpClient())
+                        {
+                            // TODO: Add insert logic here
+                            EditLocationVewModel locationEditViewModel = null;
 
-                return RedirectToAction(nameof(Index));
+                            client.BaseAddress = new Uri("https://cocshopwebapi20190925023900.azurewebsites.net/");
+                            client.DefaultRequestHeaders.Accept.Clear();
+                            client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+                            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {_token.Access_token}");
+                            HttpResponseMessage response = await client.PutAsJsonAsync($"api/Locations/{id}", locationViewModel.Location);
+                            var jsonString = await response.Content.ReadAsStringAsync();
+                            var body = JsonConvert.DeserializeObject<BaseViewModel<UpdateLocationViewModel>>(jsonString);
+                            if (response.IsSuccessStatusCode)
+                            {
+                                TempData["Success"] = "Update Successfully";
+                                return RedirectToAction("Index", "Location");
+                            }
+                            else
+                            {
+                                locationEditViewModel = new EditLocationVewModel
+                                {
+                                    User = _token,
+                                    Location = locationViewModel.Location,
+                                };
+                                ViewBag.Error = body.Description;
+                                return View(locationEditViewModel);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        EditLocationVewModel locationEditViewModel = new EditLocationVewModel
+                        {
+                            User = _token,
+                            Location = locationViewModel.Location,
+                        };
+                        return View(locationEditViewModel);
+                    }
+                }
+                catch
+                {
+                    EditLocationVewModel locationEditViewModel = new EditLocationVewModel
+                    {
+                        User = _token,
+                        Location = locationViewModel.Location,
+                    };
+                    return View(locationEditViewModel);
+                }
             }
-            catch
-            {
-                return View();
-            }
+            return RedirectToAction("Login", "Auth");
         }
 
         // GET: Location/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(string id)
         {
-            return View();
-        }
-
-        // POST: Location/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
+            TokenViewModel _token = HttpContext.Session.Get<TokenViewModel>(Constant.TOKEN);
+            if (_token != null)
             {
-                // TODO: Add delete logic here
+                using (var client = new HttpClient())
+                {
+                    // TODO: Add insert logic here
+                    client.BaseAddress = new Uri("https://cocshopwebapi20190925023900.azurewebsites.net/");
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+                    client.DefaultRequestHeaders.Add("Authorization", $"Bearer {_token.Access_token}");
 
-                return RedirectToAction(nameof(Index));
+                    HttpResponseMessage response = await client.DeleteAsync($"api/Locations/{id}");
+                    var jsonString = await response.Content.ReadAsStringAsync();
+                    var body = JsonConvert.DeserializeObject<BaseViewModel<string>>(jsonString);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        return Json(new { status = true });
+                    }
+                    else
+                    {
+                        return Json(new { status = false, error = body.Description });
+                    }
+
+                }
             }
-            catch
-            {
-                return View();
-            }
+            return RedirectToAction("Login", "Auth");
         }
     }
 }

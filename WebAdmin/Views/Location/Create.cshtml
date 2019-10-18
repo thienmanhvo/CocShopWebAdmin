@@ -1,4 +1,4 @@
-﻿@model ProductIndexViewModel
+﻿@model CreateLocationVewModel
 
 <body class="">
     <!-- Extra details for Live View on GitHub Pages -->
@@ -162,109 +162,51 @@
             <!-- End Navbar -->
             <div class="content">
                 <center>
-                    <span class="text-success" style="text-align:center">@ViewBag.Success</span>
-                </center>
-                <center>
                     <span class="text-danger" style="text-align:center">@ViewBag.Error</span>
                 </center>
+                <center>
+                    <span class="text-success" style="text-align:center">@ViewBag.Success</span>
+                </center>
                 <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="card" style=" box-shadow:0 16px 38px -12px rgba(0,0,0,.56),0 4px 25px 0 rgba(0,0,0,.12),0 8px 10px -5px rgba(0,0,0,.2)">
-                                <div class="card-header card-header-primary card-header-icon">
-                                    <div class="card-icon">
-                                        <i class="material-icons">assignment</i>
-                                    </div>
-                                    <h4 class="card-title">Products</h4>
-                                </div>
-                                <div class="card-body">
-                                    <div class="toolbar">
-                                        <!--        Here you can write extra buttons/actions for the toolbar              -->
-                                    </div>
-                                    <div class="material-datatables">
-                                        <table id="datatables" class="table table-striped table-no-bordered table-hover" cellspacing="0" width="100%" style="width:100%">
-                                            <thead>
-                                                <tr>
-                                                    <th>@Html.DisplayNameFor(model => model.Products.ElementAt(0).ImagePath)</th>
-                                                    <th>@Html.DisplayNameFor(model => model.Products.ElementAt(0).Category.Name)</th>
-                                                    <th>@Html.DisplayNameFor(model => model.Products.ElementAt(0).ProductName)</th>
-                                                    <th>@Html.DisplayNameFor(model => model.Products.ElementAt(0).Price)</th>
-                                                    <th>@Html.DisplayNameFor(model => model.Products.ElementAt(0).PriceSale)</th>
-                                                    <th>@Html.DisplayNameFor(model => model.Products.ElementAt(0).IsBest)</th>
-                                                    <th>@Html.DisplayNameFor(model => model.Products.ElementAt(0).IsNew)</th>
-                                                    <th>@Html.DisplayNameFor(model => model.Products.ElementAt(0).IsSale)</th>
-                                                    <th>@Html.DisplayNameFor(model => model.Products.ElementAt(0).Quantity)</th>
-                                                    <th>@Html.DisplayNameFor(model => model.Products.ElementAt(0).Description)</th>
-                                                    <th>@Html.DisplayNameFor(model => model.Products.ElementAt(0).CreatedAt)</th>
-                                                    <th>@Html.DisplayNameFor(model => model.Products.ElementAt(0).UpdatedAt)</th>
-                                                    <th class="disabled-sorting text-right">Actions</th>
-                                                </tr>
-                                            </thead>
-                                            <tfoot>
-                                                <tr>
-                                                    <th>@Html.DisplayNameFor(model => model.Products.ElementAt(0).ImagePath)</th>
-                                                    <th>@Html.DisplayNameFor(model => model.Products.ElementAt(0).Category.Name)</th>
-                                                    <th>@Html.DisplayNameFor(model => model.Products.ElementAt(0).ProductName)</th>
-                                                    <th>@Html.DisplayNameFor(model => model.Products.ElementAt(0).Price)</th>
-                                                    <th>@Html.DisplayNameFor(model => model.Products.ElementAt(0).PriceSale)</th>
-                                                    <th>@Html.DisplayNameFor(model => model.Products.ElementAt(0).IsBest)</th>
-                                                    <th>@Html.DisplayNameFor(model => model.Products.ElementAt(0).IsNew)</th>
-                                                    <th>@Html.DisplayNameFor(model => model.Products.ElementAt(0).IsSale)</th>
-                                                    <th>@Html.DisplayNameFor(model => model.Products.ElementAt(0).Quantity)</th>
-                                                    <th>@Html.DisplayNameFor(model => model.Products.ElementAt(0).Description)</th>
-                                                    <th>@Html.DisplayNameFor(model => model.Products.ElementAt(0).CreatedAt)</th>
-                                                    <th>@Html.DisplayNameFor(model => model.Products.ElementAt(0).UpdatedAt)</th>
-                                                    <th class="text-right">Actions</th>
-                                                </tr>
-                                            </tfoot>
-                                            <tbody>
-                                                @foreach (var item in Model.Products)
-                                                {
-                                                    <tr id="@item.Id">
 
-                                                        <td>
-                                                            <div>
-                                                                <img src="@Url.Content(@item.ImagePath)" class=".img-thumbnail" style="height:50px;width:50px" />
-                                                            </div>
-                                                        </td>
-                                                        <td>@item.Category.Name</td>
-                                                        <td>@item.ProductName</td>
-                                                        <td>@string.Format("{0:#,0}", item.Price)</td>
-                                                        <td>@string.Format("{0:#,0}", item.PriceSale)</td>
-                                                        <td>@item.IsBest</td>
-                                                        <td>@item.IsNew</td>
-                                                        <td>@item.IsSale</td>
-                                                        <td>@item.Quantity</td>
-                                                        <td>@item.Description</td>
-                                                        <td>@item.CreatedAt?.ToShortDateString()</td>
-                                                        <td>@item.UpdatedAt?.ToShortDateString()</td>
-                                                        <td class="text-right">
-                                                            @*<a href="#" class="btn btn-link btn-info btn-just-icon like"><i class="material-icons">favorite</i></a>*@
-                                                            <a href="@Url.Action("Edit", "Product", new { id = item.Id })" class="btn btn-link btn-warning btn-just-icon edit"><i class="material-icons">dvr</i></a>
-                                                            <button data-id="@item.Id" class="btn btn-link btn-danger btn-just-icon remove" onclick="demo.showSwal('warning-message-and-confirmation', this)"><i class="material-icons">close</i></button>
-                                                            @*<a href="#" class="btn btn-link btn-danger btn-just-icon remove"><i class="material-icons">close</i></a>*@
-                                                        </td>
-                                                    </tr>
-                                                }
-                                            </tbody>
-                                        </table>
-                                        <div class="card-footer text-right">
-                                            <div class="form-check mr-auto">
+                    <div class="row justify-content-md-center">
 
-                                            </div>
-                                            <a href="@Url.Action("Create", "Product")" class="btn btn-rose">Create</a>
+                        <div class="col-md-10">
+                            <form id="RegisterValidation" class="form" method="post" asp-controller="Location" asp-action="Create">
+                                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                <div class="card">
+                                    <div class="card-header card-header-rose card-header-icon">
+                                        <div class="card-icon">
+                                            <i class="material-icons">edit</i>
                                         </div>
+                                        <h4 class="card-title">Create Location</h4>
+                                    </div>
+                                    <div class="row justify-content-md-center">
+                                        <div class="card-body col-md-10">
+                                            <div class="form-group">
+                                                <label asp-for="Location.LocationName" class="control-label bmd-label-floating"></label>
+                                                <input asp-for="Location.LocationName" class="form-control" required>
+                                                <span asp-validation-for="Location.LocationName" class="text-danger"></span>
+                                            </div>
+                                            <div class="category form-category">* Required fields</div>
+                                        </div>
+
+
+                                    </div>
+                                    <div class="card-footer text-right">
+                                        <div class="form-check mr-auto">
+
+                                        </div>
+                                        <button type="submit" class="btn btn-rose">Submit</button>
                                     </div>
                                 </div>
-                                <!-- end content-->
-                            </div>
-                            <!--  end card  -->
+                            </form>
                         </div>
-                        <!-- end col-md-12 -->
                     </div>
-                    <!-- end row -->
                 </div>
             </div>
+
+
             <footer class="footer">
                 <div class="container-fluid">
                     <nav class="float-left">
@@ -709,6 +651,7 @@
     <noscript>
         <img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=111649226022273&amp;ev=PageView&amp;noscript=1" />
     </noscript>
+    <script src="//static.filestackapi.com/filestack-js/1.x.x/filestack.min.js"></script>
     <script>
         $(document).ready(function () {
             $('#datatables').DataTable({
@@ -744,6 +687,49 @@
             table.on('click', '.like', function () {
                 alert('You clicked on Like button');
             });
+
+            $('#update').on('click', function (e) {
+
+                const client = filestack.init('A5gVwSEBQmeKlM0g3nLN3z');
+
+                const options = {
+                    "maxFiles": 1,
+                    "accept": [
+                        "image/jpeg",
+                        "image/jpg",
+                        "image/png",
+                        "image/bmp",
+                        "image/gif",
+                        "application/pdf"
+                    ],
+                    "storeTo": {
+                        "container": "devportal-customers-assets",
+                        "path": "user-uploads/",
+                        "region": "us-east-1"
+                    },
+                    "fromSources": [
+                        "local_file_system"
+                    ],
+                    "uploadInBackground": false,
+                    onFileSelected: file => {
+                        // If you throw any error in this function it will reject the file selection.
+                        // The error message will be displayed to the user as an alert.
+                        if (file.size > 1000 * 1000) {
+                            throw new Error('File too big, select something smaller than 1MB');
+                        }
+                    },
+                    onUploadDone: res => a(res),
+                };
+                client.picker(options).open();
+
+            });
+
+            function a(Blobs) {
+                var result = Blobs.filesUploaded[0].url;
+                console.log(result);
+                $('#img-product').attr('src', result);
+                $("#avatar").val(result);
+            }
         });
 
 

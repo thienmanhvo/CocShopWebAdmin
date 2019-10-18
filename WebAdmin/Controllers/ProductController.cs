@@ -18,6 +18,14 @@ namespace WebAdmin.Controllers
         // GET: Product
         public async Task<ActionResult> Index()
         {
+            if (TempData["Success"] != null)
+            {
+                ViewBag.Success = TempData["Success"];
+            }
+            if (TempData["Error"] != null)
+            {
+                ViewBag.Error = TempData["Error"];
+            }
             TokenViewModel _token = HttpContext.Session.Get<TokenViewModel>(Constant.TOKEN);
             if (_token != null)
             {
@@ -121,6 +129,7 @@ namespace WebAdmin.Controllers
                             var body = JsonConvert.DeserializeObject<BaseViewModel<UpdateProductViewModel>>(jsonString);
                             if (response.IsSuccessStatusCode)
                             {
+                                TempData["Success"] = "Create Successfully";
                                 return RedirectToAction("Index", "Product");
                             }
                             else
@@ -138,7 +147,7 @@ namespace WebAdmin.Controllers
                     }
                     else
                     {
-                        ProductEditViewModel productEditViewModel = new ProductEditViewModel
+                        ProductCreateViewModel productEditViewModel = new ProductCreateViewModel
                         {
                             User = _token,
                             Product = productViewModel.Product,
@@ -221,7 +230,7 @@ namespace WebAdmin.Controllers
                         productEditViewModel.Categories = await GetAllCate(_token);
                         if (!response.IsSuccessStatusCode)
                         {
-                            ViewBag.Error = body.Description;
+                            TempData["Error"] = body.Description;
                             RedirectToAction("Index", "Product");
                         }
 
@@ -279,6 +288,8 @@ namespace WebAdmin.Controllers
                             var body = JsonConvert.DeserializeObject<BaseViewModel<UpdateProductViewModel>>(jsonString);
                             if (response.IsSuccessStatusCode)
                             {
+                                //ViewBag.Success = "Update Successfully";
+                                TempData["Success"] = "Update Successfully";
                                 return RedirectToAction("Index", "Product");
                             }
                             else
